@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clean Kiss Clicker 💋</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;min-height:100vh;padding:20px;
+ display:flex;align-items:center;justify-content:center;
+ color:white;font-family:Arial,sans-serif;text-align:center;
+ background:radial-gradient(circle at top,#222c62,#090b16 70%);
+ overflow-x:hidden
+}
+
+.game{width:100%;max-width:520px}
+
+h1{
+ color:#ff77bc;font-size:30px;
+ text-shadow:0 0 20px #ff399a
+}
+
+.subtitle{color:#bdc7ef}
+
+.score{
+ background:#171d35;border:1px solid #454d80;
+ border-radius:18px;padding:15px;margin:20px 0
+}
+
+.score strong{
+ display:block;font-size:40px;color:#ff7bbb;margin:5px
+}
+
+.character{
+ width:210px;height:210px;margin:24px auto;
+ display:flex;align-items:center;justify-content:center;
+ border-radius:50%;background:linear-gradient(135deg,#253c86,#11162c);
+ border:3px solid #697cf4;box-shadow:0 0 35px #5268ff55;
+ cursor:pointer;transition:transform .15s
+}
+
+.face{font-size:115px;user-select:none}
+.character:active{transform:scale(.93)}
+
+#kiss{
+ border:0;border-radius:18px;padding:18px 30px;
+ font-size:21px;font-weight:bold;color:#311027;
+ background:linear-gradient(135deg,#ff9bcf,#ff4e9b);
+ box-shadow:0 6px 0 #a82a66,0 0 25px #ff4e9b55;
+ cursor:pointer
+}
+
+#kiss:active{transform:translateY(4px)}
+
+.level{margin:24px 0;color:#ffe0f0;font-size:17px}
+
+.bar{
+ height:12px;background:#292e49;border-radius:20px;
+ overflow:hidden;margin-top:12px
+}
+
+#fill{
+ height:100%;width:0%;
+ background:linear-gradient(90deg,#ff6eaf,#ffdc8c);
+ transition:width .3s
+}
+
+.message{min-height:32px;color:#ffb5dc;font-weight:bold;margin:20px 0}
+
+.bottom{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+.small{
+ border:1px solid #414d79;background:#171d35;color:white;
+ padding:11px 15px;border-radius:10px;cursor:pointer
+}
+
+.heart{
+ position:fixed;pointer-events:none;z-index:1000;
+ animation:fly 1.2s ease-out forwards;font-size:28px
+}
+
+@keyframes fly{
+ 0%{opacity:1;transform:translateY(0) scale(.5)}
+ 100%{opacity:0;transform:translateY(-180px) scale(1.7) rotate(25deg)}
+}
+
+@keyframes bounce{
+ 0%,100%{transform:scale(1)}
+ 50%{transform:scale(1.09) rotate(-3deg)}
+}
+
+.bounce{animation:bounce .22s ease}
+
+footer{color:#828cad;font-size:12px;margin-top:30px}
+
+/* ÖDÜL EKRANI */
+.reward-overlay{
+ position:fixed;inset:0;z-index:999;
+ display:flex;align-items:center;justify-content:center;
+ padding:20px;background:rgba(3,5,18,.88);
+ backdrop-filter:blur(9px);
+ opacity:0;visibility:hidden;pointer-events:none;
+ transition:opacity .3s
+}
+
+.reward-overlay.show{
+ opacity:1;visibility:visible;pointer-events:auto
+}
+
+.reward-box{
+ width:100%;max-width:420px;padding:30px 20px;
+ border:2px solid #ff75bb;border-radius:25px;
+ background:linear-gradient(145deg,#292050,#11172d);
+ box-shadow:0 0 50px #ff45a477;
+ animation:rewardPop .45s ease
+}
+
+.reward-box h2{color:#ff8bc9;font-size:27px;line-height:1.35}
+.reward-box p{line-height:1.7;color:#f5d9ec}
+.big-heart{font-size:75px;animation:heartBeat .8s infinite alternate}
+
+.reward-box button{
+ border:0;border-radius:12px;padding:14px 24px;
+ font-weight:bold;font-size:16px;
+ background:#ff82bf;color:#29102a;cursor:pointer
+}
+
+@keyframes rewardPop{
+ from{transform:scale(.5) rotate(-5deg)}
+ to{transform:scale(1) rotate(0)}
+}
+
+@keyframes heartBeat{
+ to{transform:scale(1.15)}
+}
+
+@media(max-width:400px){
+ h1{font-size:25px}
+ .character{width:180px;height:180px}
+ .face{font-size:95px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="game">
+ <h1>💋 CLEAN KISS CLICKER 💋</h1>
+ <p class="subtitle">Clean'a sevgini göster! ❤️</p>
+
+ <div class="score">
+  TOPLAM ÖPÜCÜK
+  <strong id="score">0</strong>
+  <span id="best">En iyi: 0</span>
+ </div>
+
+ <div class="character" id="character" title="Tıkla!">
+  <div class="face" id="face">😎</div>
+ </div>
+
+ <button id="kiss">💋 CLEAN'I ÖP!</button>
+
+ <div class="level">
+  <div id="level">Seviye 1 — Yeni Fan ❤️</div>
+  <div class="bar"><div id="fill"></div></div>
+  <p id="progress">Sonraki seviye: 10 öpücük</p>
+ </div>
+
+ <div class="message" id="message">
+  Haydi, ilk öpücüğü gönder! 💖
+ </div>
+
+ <div class="bottom">
+  <button class="small" id="sound">🔊 Ses: Açık</button>
+  <button class="small" id="reset">🔄 Yeniden başla</button>
+ </div>
+
+ <footer>Made with ❤️ by Clean • Clicker Game</footer>
+</div>
+
+<!-- AŞAMA ÖDÜLÜ -->
+<div class="reward-overlay" id="rewardOverlay">
+ <div class="reward-box">
+  <div class="big-heart">💋❤️</div>
+  <h2>CLEAN TARAFINDAN ÖPÜCÜK KAZANDIN!</h2>
+  <p id="rewardText">Yeni aşamaya ulaştın!</p>
+  <button id="claim">Ödülümü al! 💖</button>
+ </div>
+</div>
+
+<script>
+let score=0;
+let best=0;
+let soundOn=true;
+let lastRewardLevel=0;
+
+const $=id=>document.getElementById(id);
+
+const messages=[
+ "Clean'a kocaman bir öpücük! 💋",
+ "Kalpler havada uçuşuyor! 💖",
+ "Clean fanı iş başında! 😎",
+ "Tıklama rekoru geliyor! 😂",
+ "Clean mutluluktan uçuyor! 🚀",
+ "Bir tık daha, efsane olacaksın! 🔥",
+ "Kalp yağmuru başladı! 💗"
+];
+
+const levels=[
+ {n:0,name:"Yeni Fan ❤️"},
+ {n:10,name:"Kalp Avcısı 💗"},
+ {n:50,name:"Clean Fanı 😎"},
+ {n:100,name:"Öpücük Ustası 💋"},
+ {n:250,name:"Efsanevi Fan 🔥"},
+ {n:500,name:"Clean Efsanesi 👑"},
+ {n:1000,name:"Tıklama Tanrısı ⚡"}
+];
+
+function update(){
+ $("score").textContent=score.toLocaleString("tr-TR");
+ $("best").textContent="En iyi: "+best.toLocaleString("tr-TR");
+
+ let current=levels[0],next=null;
+
+ for(let i=0;i<levels.length;i++){
+  if(score>=levels[i].n)current=levels[i];
+  else{next=levels[i];break}
+ }
+
+ $("level").textContent=
+  "Seviye "+(levels.indexOf(current)+1)+" — "+current.name;
+
+ if(next){
+  const progress=(score-current.n)/(next.n-current.n)*100;
+  $("fill").style.width=Math.min(100,progress)+"%";
+  $("progress").textContent="Sonraki seviye: "+next.n+" öpücük";
+ }else{
+  $("fill").style.width="100%";
+  $("progress").textContent="Maksimum seviye! EFSANE! 👑";
+ }
+}
+
+function heart(){
+ const el=document.createElement("div");
+ el.className="heart";
+ el.textContent=["💋","💖","💕","💗","😘","✨"]
+  [Math.floor(Math.random()*6)];
+ el.style.left=(15+Math.random()*70)+"vw";
+ el.style.top=(45+Math.random()*35)+"vh";
+ document.body.appendChild(el);
+ setTimeout(()=>el.remove(),1250);
+}
+
+function beep(){
+ if(!soundOn)return;
+
+ try{
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  const ctx=new AudioCtx();
+  const osc=ctx.createOscillator();
+  const gain=ctx.createGain();
+
+  osc.type="sine";
+  osc.frequency.value=650;
+  gain.gain.value=.06;
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime+.09);
+  osc.onended=()=>ctx.close();
+ }catch(e){}
+}
+
+function showReward(level){
+ $("rewardText").textContent=
+  "Tebrikler! "+level.name+
+  " aşamasını açtın. "+score+
+  " öpücüğe ulaştın! 🎉";
+
+ $("rewardOverlay").classList.add("show");
+
+ for(let i=0;i<12;i++){
+  setTimeout(heart,i*80);
+ }
+}
+
+function closeReward(){
+ $("rewardOverlay").classList.remove("show");
+}
+
+function clickKiss(){
+ score++;
+ best=Math.max(best,score);
+
+ $("face").textContent=score%10===0?"🥰":"😘";
+
+ $("character").classList.remove("bounce");
+ void $("character").offsetWidth;
+ $("character").classList.add("bounce");
+
+ heart();
+ if(score%5===0)heart();
+
+ if(score%25===0){
+  $("message").textContent=
+   score+" öpücük! Clean seni alkışlıyor! 🏆";
+ }else{
+  $("message").textContent=
+   messages[Math.floor(Math.random()*messages.length)];
+ }
+
+ beep();
+
+ // Yeni bir aşamaya ulaşıldı mı?
+ const reachedLevel=[...levels].reverse()
+  .find(l=>score>=l.n);
+
+ if(reachedLevel && reachedLevel.n>lastRewardLevel){
+  lastRewardLevel=reachedLevel.n;
+
+  if(reachedLevel.n>0){
+   showReward(reachedLevel);
+  }
+ }
+
+ update();
+}
+
+$("kiss").addEventListener("click",clickKiss);
+$("character").addEventListener("click",clickKiss);
+
+$("claim").addEventListener("click",closeReward);
+
+$("sound").onclick=()=>{
+ soundOn=!soundOn;
+ $("sound").textContent=
+  soundOn?"🔊 Ses: Açık":"🔇 Ses: Kapalı";
+};
+
+$("reset").onclick=()=>{
+ if(confirm("Puanını sıfırlamak istiyor musun?")){
+  score=0;
+  lastRewardLevel=0;
+  $("face").textContent="😎";
+  $("message").textContent="Yeni tur başladı! Haydi! 💖";
+  closeReward();
+  update();
+ }
+};
+
+update();
+</script>
+
+</body>
+</html>
